@@ -57,7 +57,7 @@ python -m VT_TacGripper.tools.configure_motor --sn <SN> --check
 python -m VT_TacGripper.tools.configure_motor --sn <SN>   # Enter confirms
 
 # Calibrate both travel limits (re-center zero, 1% margin, 3.0 Nm scan force)
-python -m VT_TacGripper.tools.calibrate --sn <SN> --config ./devices.json
+python -m VT_TacGripper.tools.calibrate --sn <SN> --product-model VT-TacGripper-85-S --config ./devices.json
 
 # Synchronized open/close demo; --blocking for concurrent blocking moves
 python -m VT_TacGripper.tools.demo --config ./devices.json --blocking

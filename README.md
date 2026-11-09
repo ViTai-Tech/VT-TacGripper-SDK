@@ -54,7 +54,7 @@ python -m VT_TacGripper.tools.configure_motor --sn <SN> --check
 python -m VT_TacGripper.tools.configure_motor --sn <SN>   # 回车默认确认写入
 
 # 自动标定开闭限位（默认重设零点、1% 安全边距、3.0 Nm 扫描力）
-python -m VT_TacGripper.tools.calibrate --sn <SN> --config ./devices.json
+python -m VT_TacGripper.tools.calibrate --sn <SN> --product-model VT-TacGripper-85-S --config ./devices.json
 
 # 同步开合演示；--blocking 为阻塞并发模式
 python -m VT_TacGripper.tools.demo --config ./devices.json --blocking
