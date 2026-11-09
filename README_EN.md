@@ -77,6 +77,7 @@ The `examples/` directory contains:
 | `config_edit.py` | Preview/edit the per-device mapping |
 | `check_devices.py` | Enumerate adapters and check gripper configuration/status |
 | `motion.py` | Instantiate a gripper and open/close/move/cycle |
+| `motion_slip.py` | Gripper motion + two-channel visuotactile slip states (requires pyvitaisdk) |
 
 Install the wheel above first, and point `--config` at your `devices.json`:
 
@@ -84,7 +85,12 @@ Install the wheel above first, and point `--config` at your `devices.json`:
 python examples/check_devices.py --config ./devices.json
 python examples/config_edit.py --sn <SN> --config ./devices.json
 python examples/motion.py --sn <SN> --config ./devices.json --action cycle
+python examples/motion_slip.py --sn <SN> --config ./devices.json
 ```
+
+`motion_slip` requires the ViTai visuotactile sensor SDK `pyvitaisdk` (not bundled in this wheel):
+https://github.com/ViTai-Tech/ViTai-SDK-Release
+Download the matching wheel from its Releases and install it first.
 
 ## Configuration and permissions
 

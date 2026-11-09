@@ -74,6 +74,7 @@ python -m VT_TacGripper.tools.teach --sn <SN> --config ./devices.json
 | `config_edit.py` | 预览/修改一机一码配置映射 |
 | `check_devices.py` | 枚举适配器，检查夹爪配置与运行状态 |
 | `motion.py` | 创建夹爪实例执行开/合/移动/循环 |
+| `motion_slip.py` | 夹爪运动 + 两路视触觉滑移状态（需 pyvitaisdk） |
 
 先安装上面的 wheel，并把 `--config` 指向你的 `devices.json`：
 
@@ -81,7 +82,12 @@ python -m VT_TacGripper.tools.teach --sn <SN> --config ./devices.json
 python examples/check_devices.py --config ./devices.json
 python examples/config_edit.py --sn <SN> --config ./devices.json
 python examples/motion.py --sn <SN> --config ./devices.json --action cycle
+python examples/motion_slip.py --sn <SN> --config ./devices.json
 ```
+
+`motion_slip` 额外依赖 ViTai 视触觉传感器 SDK `pyvitaisdk`（不在本仓库 wheel 内）：
+https://github.com/ViTai-Tech/ViTai-SDK-Release
+请从该仓库 Releases 下载对应 wheel 安装后使用。
 
 ## 配置与权限
 
