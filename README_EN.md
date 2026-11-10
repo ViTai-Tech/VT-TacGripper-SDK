@@ -62,9 +62,8 @@ python -m VT_TacGripper.tools.calibrate --sn <SN> --product-model VT-TacGripper-
 # Synchronized open/close demo; --blocking for concurrent blocking moves
 python -m VT_TacGripper.tools.demo --config ./devices.json --blocking
 
-# Diagnostics / live monitor / manual teach
+# Diagnostics / manual teach
 python -m VT_TacGripper.tools.diagnose --sn <SN>
-python -m VT_TacGripper.tools.monitor --sn <SN>
 python -m VT_TacGripper.tools.teach --sn <SN> --config ./devices.json
 ```
 

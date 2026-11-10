@@ -61,7 +61,6 @@ python -m VT_TacGripper.tools.demo --config ./devices.json --blocking
 
 # 诊断 / 实时监视 / 手动示教
 python -m VT_TacGripper.tools.diagnose --sn <SN>
-python -m VT_TacGripper.tools.monitor --sn <SN>
 python -m VT_TacGripper.tools.teach --sn <SN> --config ./devices.json
 ```
 
