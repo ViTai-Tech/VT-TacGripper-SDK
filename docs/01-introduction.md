@@ -2,7 +2,7 @@
 
 **VT-TacGripper SDK** 是 VT 视触觉夹爪的 Python 控制 SDK。它通过 USB2CANFD 适配器连接夹爪电机，完成从设备发现、通信配置、夹爪标定到位置/力控运动的全过程。
 
-> **适用版本**：1.1.0
+> **适用版本**：1.2.0
 > **运行平台**：Linux x86_64（Ubuntu 22.04 实测）
 > **Python**：3.10 / 3.12
 
@@ -59,7 +59,7 @@ USB2CANFD 适配器
 | 分发格式 | Linux x86_64 wheel（cp310 / cp312） |
 
 > ⚠️ **平台限制**
-> 当前 1.1.0 wheel 仅支持 Linux x86_64。Windows、macOS、ARM64 暂不提供预编译 wheel。
+> 当前 1.2.0 wheel 仅支持 Linux x86_64。Windows、macOS、ARM64 暂不提供预编译 wheel。
 
 ---
 
@@ -81,7 +81,7 @@ USB2CANFD 适配器
 1. **安装 wheel**：选择与 Python 版本匹配的 cp310/cp312 wheel。
 2. **配置设备权限**：安装 udev 规则，确保非 root 用户可访问适配器。
 3. **发现设备**：运行 `list_devices`，确认适配器 SN。
-4. **首次配置**：新电机或通信参数不一致时，运行 `configure_motor --check`，确认后再写入。
+4. **首次配置**：新电机或通信参数不一致时，运行 `configure_motor`；一致则零写入，有差异直接写入。
 5. **标定夹爪**：运行 `calibrate`，或使用 `teach` 手动示教。
 6. **验证动作**：用 `teach` 或 Python 代码执行一次完整开合。
 
@@ -94,7 +94,9 @@ USB2CANFD 适配器
 - 默认配置路径：`~/.config/vitai-sdk/devices.json`
 - 可用 `--config` 或环境变量 `VITAI_SDK_CONFIG` 指定其他路径。
 - 配置按适配器 SN 保存，一台夹爪一条记录。
-- 旧版默认路径不会自动迁移；如有旧配置，请用 `--config` 指向原文件。
+- 默认只保存 `product_model`、`open_rad`/`close_rad`；只有显式修改的 `travel`、`control_hz`、速度/力限才写入 `overrides`。
+- `geometry`/`motor_type`/CAN ID/波特率由产品型号和代码推导，不落盘。
+- 旧版完整配置会自动迁移；无 `product_model` 的旧记录需要重新指定产品型号。
 - 标定、示教和 `register()` 会更新对应 SN 的记录。
 
 ---
@@ -106,6 +108,7 @@ USB2CANFD 适配器
 - **同一适配器不能同时被两个进程占用**：不要同时运行 `teach`、`demo` 和其他控制程序。
 - **构造默认不使能**：`VTacGripper` 构造只完成初始化；需要运动时调用 `enable()`。`release()` 不改变使能状态，需要失能时显式调用 `disable()`。
 - **teach 退出默认保持使能**：`teach` 退出时不会自动失能；需要退出失能请加 `--disable-on-exit`，或在交互中输入 `d`。
+- **85-S/Slim 需人工选择产品型号**：两者都是 DM3507，无法从电机寄存器区分；必须按机构选择 `product_model`，标定跨度检查会拦截明显错误。
 - **POS_VEL 没有力参数**：该模式下 `force` 会被忽略并给出警告；需要力上限时使用 POS_FORCE。
 - **反馈存在突发延迟**：反馈平均速率正常，但应用层可能看到 0–300 ms 的到达间隔；判断状态时以 `age` 和最新快照为准。
 - **温度/实时状态需要使能**：`t_mos`、`t_rotor`、位置、速度、力矩来自反馈帧；未使能时无实时数据。诊断时用 `diagnose --enable`（诊断结束后自动失能）。

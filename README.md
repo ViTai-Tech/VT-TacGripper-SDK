@@ -21,13 +21,13 @@ VT-TacGripper（VT 视触觉夹爪）的 Python SDK。自带厂商运行库（�
 
 从 [Releases](https://github.com/ViTai-Tech/VT-TacGripper-SDK/releases) 下载与 Python 版本匹配的 wheel：
 
-- Python 3.10：`vt_tacgripper_sdk-1.1.0-cp310-cp310-linux_x86_64.whl`
-- Python 3.12：`vt_tacgripper_sdk-1.1.0-cp312-cp312-linux_x86_64.whl`
+- Python 3.10：`vt_tacgripper_sdk-1.2.0-cp310-cp310-linux_x86_64.whl`
+- Python 3.12：`vt_tacgripper_sdk-1.2.0-cp312-cp312-linux_x86_64.whl`
 
 ```bash
 python3 -m venv .venv
 source .venv/bin/activate
-pip install ./vt_tacgripper_sdk-1.1.0-cp310-cp310-linux_x86_64.whl
+pip install ./vt_tacgripper_sdk-1.2.0-cp310-cp310-linux_x86_64.whl
 ```
 
 ## 快速开始
@@ -54,8 +54,7 @@ finally:
 python -m VT_TacGripper.tools.list_devices
 
 # 新电机首次配置（默认目标：CAN ID 0x01 / Master 0x11 / MIT / 5 Mbps）
-python -m VT_TacGripper.tools.configure_motor --sn <SN> --check
-python -m VT_TacGripper.tools.configure_motor --sn <SN>   # 回车默认确认写入
+python -m VT_TacGripper.tools.configure_motor --sn <SN>   # 自动比较；有差异才写入
 
 # 自动标定开闭限位（默认重设零点、1% 安全边距、3.0 Nm 扫描力）
 python -m VT_TacGripper.tools.calibrate --sn <SN> --product-model VT-TacGripper-85-S --config ./devices.json

@@ -1,6 +1,6 @@
 # 🦾 VT-TacGripper SDK 使用手册
 
-> **版本**：1.1.0
+> **版本**：1.2.0
 > **平台**：Linux x86_64 · Python 3.10 / 3.12
 > **适用夹爪**：VT-TacGripper-85-S、VT-TacGripper-85-L、VT-TacGripper-Slim
 

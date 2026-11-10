@@ -28,16 +28,10 @@ VTacGripper(
     bus=None,
     store=None,
     config_path=None,
-    geometry=None,
-    motor_type=None,
     product_model=None,
-    can_id=None,
-    master_id=None,
     control_hz=None,
     travel=None,
     control_mode="pos_force",
-    nom_baud=None,
-    dat_baud=None,
     auto_register=False,
     auto_enable=False,
     channel=0,
@@ -52,23 +46,18 @@ VTacGripper(
 | `bus` | `None` | 复用的总线对象；一般不需要传 |
 | `store` | `None` | 复用的配置存储对象；一般不需要传 |
 | `config_path` | `None` | 一机一码配置路径；`None` 使用 `~/.config/vitai-sdk/devices.json` |
-| `geometry` | `None` | 几何类型：`parallel`（mm）或 `arc`（deg）；首次注册时使用 |
-| `motor_type` | `None` | 电机型号名或 `"auto"`；首次注册时使用 |
-| `product_model` | `None` | 产品型号；首次注册时可代替 `geometry`/`motor_type` |
-| `can_id` | `None` | 覆盖配置中的电机 CAN ID |
-| `master_id` | `None` | 覆盖配置中的主机 ID |
-| `control_hz` | `None` | 覆盖控制/反馈处理频率 |
-| `travel` | `None` | 额定行程（mm 或 deg） |
+| `product_model` | `None` | VT 产品型号；首次注册必需，之后从配置读取 |
+| `control_hz` | `None` | 本次运行的控制频率覆盖值；非默认值会写入 `overrides` |
+| `travel` | `None` | 本次运行的额定行程覆盖值；非默认值会写入 `overrides` |
 | `control_mode` | `"pos_force"` | 控制模式：`"pos_force"`（默认）或 `"pos_vel"` |
-| `nom_baud` | `None` | 覆盖仲裁段波特率 |
-| `dat_baud` | `None` | 覆盖数据段波特率 |
 | `auto_register` | `False` | 配置中无该 SN 时是否自动注册 |
 | `auto_enable` | `False` | 构造完成后是否立即使能并保持当前位置；默认不使能 |
 | `channel` | `0` | CAN 通道号 |
 
 ### ⚠️ 构造行为
 
-- 按 SN 读取配置，打开适配器并同步电机量程。
+- 按 SN 读取配置，打开适配器并读取实机量程。
+- 按 `product_model` 推导 geometry/电机型号；实机与产品型号不一致时直接报错（S/L 可校验；S/Slim 依靠标定跨度检查）。
 - 显式写入并读回校验 `control_mode`；固件不支持时抛 `MotorModeError`，不会静默回退。
 - **默认不使能**；构造后需调用 `enable()`，或传 `auto_enable=True` 立即使能并保持。
 - 配置中不存在 SN 且未开启 `auto_register` 时，会抛出 `RuntimeError`。
@@ -353,7 +342,7 @@ g.describe() -> dict
 g.register(**overrides)
 ```
 
-修改并保存当前 SN 的配置字段（如 `travel`、`torque_limit_nm`、`speed_limit_rad_s`），返回更新后的记录。字段名不存在时抛 `AttributeError`。
+修改并保存当前 SN 的配置字段；`travel`、`control_hz`、`speed_limit_rad_s`、`torque_limit_nm` 会写入 `overrides`，字段名不存在时抛 `AttributeError`。
 
 ### `clear_error()`
 

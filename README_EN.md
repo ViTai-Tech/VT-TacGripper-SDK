@@ -23,13 +23,13 @@ registers.
 Download the wheel matching your Python version from
 [Releases](https://github.com/ViTai-Tech/VT-TacGripper-SDK/releases):
 
-- Python 3.10: `vt_tacgripper_sdk-1.1.0-cp310-cp310-linux_x86_64.whl`
-- Python 3.12: `vt_tacgripper_sdk-1.1.0-cp312-cp312-linux_x86_64.whl`
+- Python 3.10: `vt_tacgripper_sdk-1.2.0-cp310-cp310-linux_x86_64.whl`
+- Python 3.12: `vt_tacgripper_sdk-1.2.0-cp312-cp312-linux_x86_64.whl`
 
 ```bash
 python3 -m venv .venv
 source .venv/bin/activate
-pip install ./vt_tacgripper_sdk-1.1.0-cp310-cp310-linux_x86_64.whl
+pip install ./vt_tacgripper_sdk-1.2.0-cp310-cp310-linux_x86_64.whl
 ```
 
 ## Quick start
@@ -58,8 +58,7 @@ call `disable()` explicitly when needed.
 python -m VT_TacGripper.tools.list_devices
 
 # Configure a new motor (default: CAN ID 0x01 / Master 0x11 / MIT / 5 Mbps)
-python -m VT_TacGripper.tools.configure_motor --sn <SN> --check
-python -m VT_TacGripper.tools.configure_motor --sn <SN>   # Enter confirms
+python -m VT_TacGripper.tools.configure_motor --sn <SN>   # compare; write only on differences
 
 # Calibrate both travel limits (re-center zero, 1% margin, 3.0 Nm scan force)
 python -m VT_TacGripper.tools.calibrate --sn <SN> --product-model VT-TacGripper-85-S --config ./devices.json

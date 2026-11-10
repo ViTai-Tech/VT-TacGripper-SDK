@@ -24,8 +24,8 @@
 
 从 [Releases](https://github.com/ViTai-Tech/VT-TacGripper-SDK/releases) 下载与 Python 版本匹配的 wheel：
 
-- Python 3.10：`vt_tacgripper_sdk-1.1.0-cp310-cp310-linux_x86_64.whl`
-- Python 3.12：`vt_tacgripper_sdk-1.1.0-cp312-cp312-linux_x86_64.whl`
+- Python 3.10：`vt_tacgripper_sdk-1.2.0-cp310-cp310-linux_x86_64.whl`
+- Python 3.12：`vt_tacgripper_sdk-1.2.0-cp312-cp312-linux_x86_64.whl`
 
 ```bash
 # 创建并激活虚拟环境
@@ -33,7 +33,7 @@ python3 -m venv .venv
 source .venv/bin/activate
 
 # 安装 wheel（按实际 Python 版本选择）
-pip install ./vt_tacgripper_sdk-1.1.0-cp310-cp310-linux_x86_64.whl
+pip install ./vt_tacgripper_sdk-1.2.0-cp310-cp310-linux_x86_64.whl
 ```
 
 验证安装：
@@ -45,11 +45,11 @@ python -c "import VT_TacGripper; print(VT_TacGripper.__version__)"
 预期输出：
 
 ```text
-1.1.0
+1.2.0
 ```
 
 > 💡 **说明**
-> wheel 已自带运行库，不需要额外安装 Python 依赖。Python 3.11 或其他平台没有对应的 1.1.0 wheel。
+> wheel 已自带运行库，不需要额外安装 Python 依赖。Python 3.11 或其他平台没有对应的 1.2.0 wheel。
 
 ---
 
@@ -93,22 +93,21 @@ python -m VT_TacGripper.tools.list_devices
 
 记下输出中的适配器 SN。后续命令中的 `<SN>` 都替换为这个值；只有一个适配器时部分工具可省略 `--sn`，但建议显式填写。
 
-### 2. 检查电机通信参数
+### 2. 自动检查并配置电机通信
 
-新电机或更换电机后，先只读检查：
-
-```bash
-python -m VT_TacGripper.tools.configure_motor --sn <SN> --check
-```
-
-- 如果提示**参数一致**：无需写入，直接进入标定。
-- 如果提示**存在差异**：运行写入命令，确认后保存：
+新电机或更换电机后，只需运行一次：
 
 ```bash
 python -m VT_TacGripper.tools.configure_motor --sn <SN>
 ```
 
-写入完成后按提示**断电至少 5 秒**，重新上电，再执行一次 `--check` 确认掉电保持。
+- 参数一致：直接退出，不写任何寄存器、不擦写 Flash；
+- 存在差异：直接写入差异项并保存一次 Flash，不再询问确认。
+
+写入完成后按提示**断电至少 5 秒**，重新上电；可选执行 `--check` 只读复检掉电保持。
+
+> 💡 **需要改控制频率/行程时**
+> 默认值由代码/产品型号决定。可在打开 `VTacGripper` 时传 `control_hz=`/`travel=`，或在 `calibrate`/`teach` 加 `--control-hz`/`--travel`；非默认值会写入该 SN 的 `overrides`，以后自动生效。不要手工修改 `geometry`/`motor_type`/CAN ID/波特率。
 
 ### 3. 确认运行状态
 
@@ -152,6 +151,10 @@ python -m VT_TacGripper.tools.diagnose --sn <SN> --enable
 > - 电源稳定，急停/断电方式可用。
 
 ### 自动标定
+
+> ⚠️ **85-S 与 Slim 无法从电机自动区分**
+> 两者都是 DM3507，必须按实物选择 `--product-model`：两指平行直线靠近的是 85-S，两指绕轴转动开合的是 Slim。标定会用实测跨度与产品参考跨度做检查；明显不符时会拒绝写配置，请重新确认产品型号。
+
 
 ```bash
 python -m VT_TacGripper.tools.calibrate \
@@ -306,7 +309,7 @@ python examples/motion.py --sn <SN> --config ./devices.json --action cycle
 | 中间位置 | `move()` 能到达目标，位置误差在容差内 |
 | 状态 | `error()` 为 `使能`，`state.faulted` 为 `False` |
 | 重复性 | 连续开合 3 次位置和动作稳定 |
-| 配置 | `--config` 指向的 `devices.json` 中存在该 SN 且 `calibrated=true` |
+| 配置 | `--config` 指向的 `devices.json` 中存在该 SN，并已写入 `open_rad`/`close_rad` |
 
 ---
 
@@ -316,7 +319,7 @@ python examples/motion.py --sn <SN> --config ./devices.json --action cycle
 # 枚举适配器
 python -m VT_TacGripper.tools.list_devices
 
-# 检查通信参数（只读）
+# 只读检查通信参数
 python -m VT_TacGripper.tools.configure_motor --sn <SN> --check
 
 # 自动标定
