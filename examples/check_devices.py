@@ -32,18 +32,25 @@ def main() -> int:
             f"已标定={record.calibrated}"
         )
         try:
-            # 创建实例会打开设备并使能电机；shutdown 只关闭电机流。
+            # 创建实例只打开设备；显式 enable 读取实时状态，结束后 disable。
             with VTacGripper(adapter.sn, store=store) as gripper:
-                info = gripper.describe()
-                position = info.get("unit_position")
-                firmware = info.get("error")
-                if firmware in ("失能", "使能"):
-                    firmware = "正常"
-                print(
-                    f"  在线={info.get('online')}  使能={gripper.motor.enabled}  "
-                    f"位置={position}  力矩={info.get('torque_nm'):+.3f} Nm  "
-                    f"固件状态={firmware}"
-                )
+                try:
+                    gripper.enable(hold=True)
+                    info = gripper.describe()
+                    position = info.get("unit_position")
+                    firmware = info.get("error")
+                    if firmware in ("失能", "使能"):
+                        firmware = "正常"
+                    print(
+                        f"  在线={info.get('online')}  使能={gripper.enabled}  "
+                        f"位置={position}  力矩={info.get('torque_nm'):+.3f} Nm  "
+                        f"固件状态={firmware}"
+                    )
+                finally:
+                    try:
+                        gripper.disable()
+                    except Exception:
+                        pass
         except Exception as exc:  # noqa: BLE001
             print(f"  状态读取失败：{exc}")
 

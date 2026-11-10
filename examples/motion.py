@@ -27,6 +27,7 @@ def main() -> int:
         print(f"创建夹爪失败：{exc}")
         return 1
     try:
+        gripper.enable(hold=True)
         kwargs = {"vel": args.vel, "force": args.force, "block": True}
         if args.action == "open":
             gripper.open(**kwargs)
@@ -47,7 +48,11 @@ def main() -> int:
         print(f"运动失败：{exc}")
         return 1
     finally:
-        gripper.shutdown()
+        try:
+            gripper.disable()
+        except Exception:
+            pass
+        gripper.release()
 
 
 if __name__ == "__main__":

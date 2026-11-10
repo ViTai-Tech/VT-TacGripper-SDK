@@ -102,6 +102,7 @@ def main(argv: list[str] | None = None) -> int:
     stop = threading.Event()
     thread = None
     try:
+        gripper.enable(hold=True)
         for sn in sns:
             sensor = VTSensor(config=finder.get_device_by_sn(sn))
             sensor.calibrate()
@@ -141,7 +142,11 @@ def main(argv: list[str] | None = None) -> int:
                 sensor.release()
             except Exception:
                 pass
-        gripper.shutdown()
+        try:
+            gripper.disable()
+        except Exception:
+            pass
+        gripper.release()
 
 
 if __name__ == "__main__":

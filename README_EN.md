@@ -7,6 +7,8 @@ Python SDK for VT-TacGripper. The wheel bundles the vendor runtime
 you enumerate adapters, configure motors, calibrate grippers, and access
 registers.
 
+📖 **User manual (Chinese)**: [Introduction](docs/01-introduction.md) · [Usage](docs/02-usage.md) · [API](docs/03-api.md) · [Errors](docs/04-errors.md)
+
 ## Requirements
 
 | Item | Supported |
@@ -19,15 +21,15 @@ registers.
 ## Installation
 
 Download the wheel matching your Python version from
-[Releases](../../releases):
+[Releases](https://github.com/ViTai-Tech/VT-TacGripper-SDK/releases):
 
-- Python 3.10: `vt_tacgripper_sdk-1.0.0-cp310-cp310-linux_x86_64.whl`
-- Python 3.12: `vt_tacgripper_sdk-1.0.0-cp312-cp312-linux_x86_64.whl`
+- Python 3.10: `vt_tacgripper_sdk-1.1.0-cp310-cp310-linux_x86_64.whl`
+- Python 3.12: `vt_tacgripper_sdk-1.1.0-cp312-cp312-linux_x86_64.whl`
 
 ```bash
 python3 -m venv .venv
 source .venv/bin/activate
-pip install ./vt_tacgripper_sdk-1.0.0-cp310-cp310-linux_x86_64.whl
+pip install ./vt_tacgripper_sdk-1.1.0-cp310-cp310-linux_x86_64.whl
 ```
 
 ## Quick start
@@ -37,14 +39,17 @@ from VT_TacGripper import VTacGripper
 
 gripper = VTacGripper("<adapter SN>")
 try:
+    gripper.enable()  # constructor does not enable; enable before motion
     gripper.open(block=True)
     gripper.close(block=True)
 finally:
-    gripper.shutdown()
+    gripper.disable()  # omit to keep the motor enabled
+    gripper.release()
 ```
 
 For first-time use, configure the motor communication and calibrate the
-gripper first (see below).
+gripper first (see below). `release()` does not change the enabled state;
+call `disable()` explicitly when needed.
 
 ## Command-line tools
 

@@ -6,6 +6,8 @@ VT-TacGripper（VT 视触觉夹爪）的 Python SDK。自带厂商运行库（�
 `libusb`/`libstdc++`），**零 pip 依赖**，wheel 安装后即可枚举适配器、配置电机、
 标定夹爪并读写寄存器。
 
+📖 **使用手册**：[SDK 介绍](docs/01-introduction.md) · [使用指南](docs/02-usage.md) · [API 文档](docs/03-api.md) · [错误码](docs/04-errors.md)
+
 ## 支持环境
 
 | 项目 | 支持范围 |
@@ -17,15 +19,15 @@ VT-TacGripper（VT 视触觉夹爪）的 Python SDK。自带厂商运行库（�
 
 ## 安装
 
-从 [Releases](../../releases) 下载与 Python 版本匹配的 wheel：
+从 [Releases](https://github.com/ViTai-Tech/VT-TacGripper-SDK/releases) 下载与 Python 版本匹配的 wheel：
 
-- Python 3.10：`vt_tacgripper_sdk-1.0.0-cp310-cp310-linux_x86_64.whl`
-- Python 3.12：`vt_tacgripper_sdk-1.0.0-cp312-cp312-linux_x86_64.whl`
+- Python 3.10：`vt_tacgripper_sdk-1.1.0-cp310-cp310-linux_x86_64.whl`
+- Python 3.12：`vt_tacgripper_sdk-1.1.0-cp312-cp312-linux_x86_64.whl`
 
 ```bash
 python3 -m venv .venv
 source .venv/bin/activate
-pip install ./vt_tacgripper_sdk-1.0.0-cp310-cp310-linux_x86_64.whl
+pip install ./vt_tacgripper_sdk-1.1.0-cp310-cp310-linux_x86_64.whl
 ```
 
 ## 快速开始
@@ -35,13 +37,15 @@ from VT_TacGripper import VTacGripper
 
 gripper = VTacGripper("<适配器 SN>")
 try:
+    gripper.enable()  # 构造默认不使能；需要运动时显式使能
     gripper.open(block=True)
     gripper.close(block=True)
 finally:
-    gripper.shutdown()
+    gripper.disable()  # 想保持使能时省略这一行
+    gripper.release()
 ```
 
-首次使用需要先配置电机通信并标定；详见下面的工具说明。
+首次使用需要先配置电机通信并标定；详见下面的工具说明。`release()` 不改变使能状态；需要失能请显式调用 `disable()`。
 
 ## 命令行工具
 
@@ -59,7 +63,7 @@ python -m VT_TacGripper.tools.calibrate --sn <SN> --product-model VT-TacGripper-
 # 同步开合演示；--blocking 为阻塞并发模式
 python -m VT_TacGripper.tools.demo --config ./devices.json --blocking
 
-# 诊断 / 实时监视 / 手动示教
+# 诊断 / 手动示教
 python -m VT_TacGripper.tools.diagnose --sn <SN>
 python -m VT_TacGripper.tools.teach --sn <SN> --config ./devices.json
 ```
