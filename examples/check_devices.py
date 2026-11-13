@@ -63,4 +63,6 @@ def main() -> int:
 
 
 if __name__ == "__main__":
-    raise SystemExit(main())
+    from VT_TacGripper.tools._exit import run_main
+
+    run_main(main)
